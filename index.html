@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Shooting</title>
+    <link rel="stylesheet" type="text/css" href="css/index-css.css"/>
+</head>
+<body>
+
+<div id = container>
+    <div class="page" id="index">
+        <h1>Shooting</h1>
+        <div id="help">Shoot all the monsters</div>
+        <div class="btns">
+            <a data-type="color" class="btn"> Start Game </a>
+        </div>
+
+        <div id="outer">
+            <div id="inner">
+                <div></div>
+                <div class="mon-two"></div>
+                <div class="mon-three"></div>
+                <div class="mon-four"></div>
+                <div class="mon-five"></div>
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+<script>
+
+    function getCss(ele,attr){
+        if(typeof getComputedStyle == "function"){
+            return parseFloat(getComputedStyle(ele,null)[attr]);
+        }else{
+            return parseFloat(ele.currentStyle[attr]);
+        }
+    }
+
+    function buffer(ele,attr,target,fnCallback){	//运动的元素 运动的方向 运动的目标
+        window.clearTimeout(ele.timer);
+        _buffer();
+        function _buffer(){
+            var cur = getCss(ele,attr);
+            var nSpeed = (target - cur) / 8;
+            nSpeed = nSpeed > 0 ? Math.ceil(nSpeed) : Math.floor(nSpeed);
+            ele.style[attr] = cur + nSpeed + "px";
+            if (nSpeed){
+                ele.timer = window.setTimeout(_buffer,30);
+            }else{
+                if(typeof fnCallback == "function"){
+                    fnCallback.call(ele);//让回调方法里的this指向当前运动的这个元素
+                }
+                ele.timer = null;
+            }
+            //console.log(nSpeed);
+        }
+    }
+
+
+    //以下是轮播图
+    var oInner = document.querySelector("#inner");
+    var oFirstDiv = oInner.getElementsByTagName("div").item(0);
+    var oCopy = oFirstDiv.cloneNode(true);
+    var length = oInner.getElementsByTagName("div").length;
+
+    oInner.appendChild(oCopy);
+    oInner.style.width = oInner.offsetWidth + oCopy.offsetWidth + "px";
+
+    var step = 0;
+    var autoTimer = null;
+
+    function autoMove(){
+        clearTimeout(autoTimer);
+        step ++;
+        if(step == length + 1){
+            oInner.style.left = 0;
+            step = 1;
+        }
+        buffer(oInner,"left",step *- 128);
+
+        autoTimer = window.setTimeout(autoMove,1200);
+    }
+
+    window.setTimeout(autoMove,500);
+
+
+    var oBtn = document.querySelector('.btn');
+    oBtn.addEventListener('click', function() {
+        this.setAttribute('href', 'game.html');
+    }, false);
+
+
+</script>
+</body>
+</html>
